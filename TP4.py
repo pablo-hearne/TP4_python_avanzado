@@ -1,7 +1,8 @@
 """Ejercicio 1: "Fuerza de Manos"
 
 Descripción:
-Se modelará un sistema en el que una persona tiene dos manos, cada una con una capacidad de carga máxima. Además, la persona posee una fuerza total, que representa el peso máximo que puede levantar combinando ambas manos.
+Se modelará un sistema en el que una persona tiene dos manos, cada una con una capacidad de carga máxima. 
+Además, la persona posee una fuerza total, que representa el peso máximo que puede levantar combinando ambas manos.
 
 El objetivo es determinar si una persona puede levantar un objeto de determinado peso usando una o ambas manos.
 
@@ -22,17 +23,22 @@ Una persona con suficiente fuerza total y con manos capaces de sostener el objet
 Si el objeto es demasiado pesado para una sola mano pero no para ambas juntas, debe levantarlo con ambas manos.
 Si el objeto excede la fuerza total de la persona, no podrá levantarlo.
 Pista:
-Usar POO para estructurar bien las clases y sus relaciones. Definir métodos que permitan tomar decisiones sobre si el objeto puede levantarse o no.
+Usar POO para estructurar bien las clases y sus relaciones. 
+
+Definir métodos que permitan tomar decisiones sobre si el objeto puede levantarse o no.
 
 Ejercicio 2: "Sistema de Compra y Envío de Productos"
 
 Descripción:
-Se requiere un sistema de compra y venta de productos, donde los usuarios puedan elegir entre diferentes métodos de entrega.
+Se requiere un sistema de compra y venta de productos,
+donde los usuarios puedan elegir entre diferentes métodos de entrega.
 
-Cada tipo de servicio de entrega tiene sus propias características, como el costo del envío y el tiempo estimado de entrega.
+Cada tipo de servicio de entrega tiene sus propias características, 
+como el costo del envío y el tiempo estimado de entrega.
 
 Objetivo:
-Diseñar un sistema flexible donde, si en el futuro se agregan nuevos métodos de entrega, no sea necesario modificar el código existente.
+Diseñar un sistema flexible donde, si en el futuro se agregan nuevos métodos de entrega, 
+no sea necesario modificar el código existente.
 
 Requisitos del programa:
 
@@ -69,3 +75,46 @@ Pista:
 Organizar el código usando clases y herencia para estructurar los distintos tipos de envío.
 Asegurar que el sistema sea escalable, permitiendo agregar más opciones sin alterar las clases existentes.
 """
+
+
+
+"""
+                    Ejercicio 1
+"""
+
+
+class Mano():
+    def __init__(self,strength):
+        self.strength = strength
+        pass
+    def movable(self,weight):
+        return self.strength >= weight
+    pass
+
+class Persona():
+    def __init__(self,hand1:Mano,hand2:Mano) -> None:
+        self.right_hand = hand1
+        self.left_hand = hand2
+        self.total_strength = hand1.strength + hand2.strength
+        pass
+    def movable(self,weight):
+        if weight < self.total_strength:
+            if self.right_hand.movable(weight):
+                print ("Se puede levantar con la mano derecha!!")
+                return
+            elif self.left_hand.movable(weight):
+                print("Se puede levantar con la mano izquierda!!")
+                return
+            print("Se debe levantar con las dos manos")
+            return
+        else:
+            print("No se puede levantar el objeto")
+            return
+    pass
+
+
+"""
+                    Ejercicio 2 
+"""
+
+
