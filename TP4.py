@@ -202,24 +202,24 @@ class Gestor_pedidos():
     data_base = "pedidos.json"
     
     @staticmethod
-    def pedidos_reading(lista_pedidos : list):
+    def pedidos_reading() -> list:
         if os.path.exists(Gestor_pedidos.data_base):
             try:
                 with open(Gestor_pedidos.data_base, "r") as f:
                     lista_pedidos = json.load(f)
+                    return lista_pedidos
             except (ValueError, json.JSONDecodeError) as e:
-                print(f"No se encontró una lista de pedidos ({e})")
-        return lista_pedidos
+                return [e]
 
 
     @staticmethod
     def pedidos_storage(Pedido:Pedido):
-        if os.path.exists(Gestor_pedidos.data_base):
             try:
-                with open(Gestor_pedidos.data_base, "r") as f:
-                    lista_pedidos = json.load(f)
+                lista_pedidos = Gestor_pedidos.pedidos_reading()
+                
             except (ValueError, json.JSONDecodeError):
                 lista_pedidos = []
+            
             lista_pedidos.append(Pedido)
             try:
                 with open(Gestor_pedidos.data_base, "w") as f:
