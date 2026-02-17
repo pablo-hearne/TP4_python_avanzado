@@ -27,7 +27,10 @@ Usar POO para estructurar bien las clases y sus relaciones.
 
 Definir métodos que permitan tomar decisiones sobre si el objeto puede levantarse o no.
 
+
+------------------------------------------------------
 Ejercicio 2: "Sistema de Compra y Envío de Productos"
+------------------------------------------------------
 
 Descripción:
 Se requiere un sistema de compra y venta de productos,
@@ -115,6 +118,167 @@ class Persona():
 
 """
                     Ejercicio 2 
+
+
+            ------------------------------------------------------------------------------
+            Quiero pedir disculpas de manera pública porque entre que me ayudé con IA y quise usar
+            las consignas en español todo éste ejercicio está en spanglish
+            ------------------------------------------------------------------------------
 """
+
+
+class Producto():
+    def __init__(self,product_name,price) -> None:
+        self.product_name = product_name
+        self.price = price
+        pass
+
+class Metodo_de_envio():
+    def __init__(self,cost,time):
+        self.cost = cost
+        self.time = time
+        pass
+    def envio(self) -> str:
+        return ""
+
+class Envio_express(Metodo_de_envio):
+    """
+    Clase de Envío Exprés
+    """
+    def __init__(self, cost, time):
+        super().__init__(cost, time)
+        self.cost = 10000
+        self.time = 24
+        pass
+
+    def envio(self):
+        return "Envío expres"
+    pass
+
+class Envio_estandar(Metodo_de_envio):
+    """
+    Clase de un Envío Estándar
+    """
+    def __init__(self, cost, time):
+        super().__init__(cost, time)
+        self.cost = 5000
+        self.time = 72
+        pass
+    def envio(self):
+        return "Envío estándar"
+    
+class Envio_personalizado(Metodo_de_envio):
+    """
+    Clase de Envío Personalizada
+    """
+    def __init__(self, cost, time):
+        super().__init__(cost, time)
+        self.cost = cost
+        self.time = time
+        pass
+
+    def envio(self):
+        return "Envío Personalizado"
+
+
+class Pedido:
+    """Clase que representa un pedido individual."""
+    def __init__(self, id_pedido,Producto : Producto, metodo_envio : Metodo_de_envio):
+        self.id_pedido = id_pedido
+        self.Producto = Producto
+        self.metodo_envio = metodo_envio
+        pass
+
+
+    def __str__(self):
+        # Esta función define cómo se imprime el pedido en pantalla
+        return f"Pedido #{self.id_pedido} | Artículo: {self.Producto.product_name} | Envío: {self.metodo_envio.envio()} | Precio final: {self.Producto.price + self.metodo_envio.cost}"
+    pass
+
+import os
+import json
+
+class Gestor_pedidos():
+    data_base = "pedidos.json"
+    
+    @staticmethod
+    def pedidos_reading(lista_pedidos : list):
+        if os.path.exists(Gestor_pedidos.data_base):
+            try:
+                with open(Gestor_pedidos.data_base, "r") as f:
+                    lista_pedidos = json.load(f)
+            except (ValueError, json.JSONDecodeError) as e:
+                print(f"No se encontró una lista de pedidos ({e})")
+        return lista_pedidos
+
+
+    @staticmethod
+    def pedidos_storage(Pedido:Pedido):
+        if os.path.exists(Gestor_pedidos.data_base):
+            try:
+                with open(Gestor_pedidos.data_base, "r") as f:
+                    lista_pedidos = json.load(f)
+            except (ValueError, json.JSONDecodeError):
+                lista_pedidos = []
+            lista_pedidos.append(Pedido)
+            try:
+                with open(Gestor_pedidos.data_base, "w") as f:
+                    json.dump(lista_pedidos, f, indent=4, ensure_ascii=False)
+                    print("✓ Pedido registrado")
+            except IOError as e:
+                print(f"Error al escribir en el archivo: {e}")
+        pass
+
+    
+        
+
+
+class SistemaPedidos:
+    """Clase para gestionar la lista de pedidos."""
+    def __init__(self):
+        self.lista_pedidos = []
+
+    def agregar_pedido(self, id_pedido, cliente, articulo, metodo_envio):
+        nuevo_pedido = Pedido(id_pedido, cliente, articulo, metodo_envio)
+        self.lista_pedidos.append(nuevo_pedido)
+        print(f"✅ Pedido #{id_pedido} registrado con éxito.")
+
+    def mostrar_pedidos(self):
+        print("\n--- Registro Actual de Pedidos ---")
+        if not self.lista_pedidos:
+            print("No hay pedidos almacenados en este momento.")
+        else:
+            for pedido in self.lista_pedidos:
+                print(pedido)
+        print("----------------------------------\n")
+    pass
+
+
+
+# ==========================================
+# Ejemplo de uso del programa
+# ==========================================
+
+# 1. Iniciamos el sistema
+mi_sistema = SistemaPedidos()
+
+# 2. Agregamos algunos pedidos de prueba
+mi_sistema.agregar_pedido(101, "Ana García", "Laptop", "Envío Express")
+mi_sistema.agregar_pedido(102, "Juan Pérez", "Teclado Mecánico", "Retiro en Tienda")
+mi_sistema.agregar_pedido(103, "Carlos López", "Monitor 24 pulgadas", "Correo Estándar")
+
+# 3. Mostramos todos los pedidos almacenados
+mi_sistema.mostrar_pedidos()
+
+
+
+
+
+
+
+
+
+
+
 
 
