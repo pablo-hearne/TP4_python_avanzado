@@ -1,0 +1,28 @@
+[
+    {
+        "id_pedido": 1,
+        "método envío": {
+            "tipo": "Envio_express",
+            "coste": 10000,
+            "tiempo": 24
+        },
+        "producto": {
+            "nombre del producto": "Estabilizador",
+            "precio": 50000
+        },
+        "total": 60000
+    },
+    {
+        "id_pedido": 2,
+        "método envío": {
+            "tipo": "Envio_estandar",
+            "coste": 5000,
+            "tiempo": 72
+        },
+        "producto": {
+            "nombre del producto": "Cepillo",
+            "precio": 5000
+        },
+        "total": 10000
+    }
+]

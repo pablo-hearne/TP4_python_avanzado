@@ -60,7 +60,8 @@ Se debe usar un método estático para registrar los pedidos en un archivo exter
 
 Puede ser un archivo .txt o .json (a elección del programador).
 
-El método debe recibir un pedido y guardar sus datos utilizando el __str__ o convertirlos a formato adecuado para JSON.
+El método debe recibir un pedido y guardar sus datos utilizando el __str__
+ o convertirlos a formato adecuado para JSON.
 
 
 Diferentes tipos de envío
@@ -128,27 +129,36 @@ class Persona():
 
 
 class Producto():
-    def __init__(self,product_name,price) -> None:
+    def __init__(self,product_name:str,price:float) -> None:
         self.product_name = product_name
         self.price = price
         pass
+    def to_dict(self):
+        return{
+            "nombre del producto" : self.product_name,
+            "precio" : self.price
+        }
 
 class Metodo_de_envio():
-    def __init__(self,cost,time):
+    def __init__(self,cost:float,time:float):
         self.cost = cost
         self.time = time
         pass
     def envio(self) -> str:
         return ""
+    def to_dict(self) -> dict:
+        return{
+            "tipo" : self.__class__.__name__,
+            "coste" : self.cost,
+            "tiempo" : self.time
+        }
 
 class Envio_express(Metodo_de_envio):
     """
     Clase de Envío Exprés
     """
-    def __init__(self, cost, time):
-        super().__init__(cost, time)
-        self.cost = 10000
-        self.time = 24
+    def __init__(self):
+        super().__init__(10000, 24)
         pass
 
     def envio(self):
@@ -159,10 +169,8 @@ class Envio_estandar(Metodo_de_envio):
     """
     Clase de un Envío Estándar
     """
-    def __init__(self, cost, time):
-        super().__init__(cost, time)
-        self.cost = 5000
-        self.time = 72
+    def __init__(self):
+        super().__init__(5000, 72)
         pass
     def envio(self):
         return "Envío estándar"
@@ -173,8 +181,6 @@ class Envio_personalizado(Metodo_de_envio):
     """
     def __init__(self, cost, time):
         super().__init__(cost, time)
-        self.cost = cost
-        self.time = time
         pass
 
     def envio(self):
@@ -194,6 +200,13 @@ class Pedido:
         # Esta función define cómo se imprime el pedido en pantalla
         return f"Pedido #{self.id_pedido} | Artículo: {self.Producto.product_name} | Envío: {self.metodo_envio.envio()} | Precio final: {self.Producto.price + self.metodo_envio.cost}"
     pass
+    def to_dict(self):
+        return{
+            "id_pedido" : self.id_pedido,
+            "método envío" : self.metodo_envio.to_dict(),
+            "producto" : self.Producto.to_dict(),
+            "total" : self.Producto.price + self.metodo_envio.cost
+        }
 
 import os
 import json
@@ -207,72 +220,58 @@ class Gestor_pedidos():
             try:
                 with open(Gestor_pedidos.data_base, "r") as f:
                     lista_pedidos = json.load(f)
-                    return lista_pedidos
+                    if lista_pedidos == None:
+                        print("La lista de pedidos no contenía pedidos pendientes")
+                        return []
+                    else:
+                        return lista_pedidos
             except (ValueError, json.JSONDecodeError) as e:
-                return [e]
-
+                print(f"No se encontró lista de pedidos en {os.getcwd()} ({e})")
+                return []
+        else:
+            print(f"No se encontró lista de pedidos en {os.getcwd()}")
+            return []
 
     @staticmethod
     def pedidos_storage(Pedido:Pedido):
-            try:
-                lista_pedidos = Gestor_pedidos.pedidos_reading()
-                
-            except (ValueError, json.JSONDecodeError):
-                lista_pedidos = []
-            
-            lista_pedidos.append(Pedido)
+            lista_pedidos = Gestor_pedidos.pedidos_reading()
+            lista_pedidos.append(Pedido.to_dict())
             try:
                 with open(Gestor_pedidos.data_base, "w") as f:
                     json.dump(lista_pedidos, f, indent=4, ensure_ascii=False)
                     print("✓ Pedido registrado")
+                    return
             except IOError as e:
                 print(f"Error al escribir en el archivo: {e}")
-        pass
+                return
+        
 
     
-        
 
 
 class SistemaPedidos:
-    """Clase para gestionar la lista de pedidos."""
-    def __init__(self):
-        self.lista_pedidos = []
-
-    def agregar_pedido(self, id_pedido, cliente, articulo, metodo_envio):
-        nuevo_pedido = Pedido(id_pedido, cliente, articulo, metodo_envio)
-        self.lista_pedidos.append(nuevo_pedido)
-        print(f"✅ Pedido #{id_pedido} registrado con éxito.")
-
-    def mostrar_pedidos(self):
-        print("\n--- Registro Actual de Pedidos ---")
-        if not self.lista_pedidos:
-            print("No hay pedidos almacenados en este momento.")
-        else:
-            for pedido in self.lista_pedidos:
-                print(pedido)
-        print("----------------------------------\n")
+    """
+    Por acá se supone que debería estar todo lo correspondiente al menú y manejo de usuario(?)
+    """
+    def __init__(self) -> None:
+        
+        pass
     pass
 
 
 
-# ==========================================
-# Ejemplo de uso del programa
-# ==========================================
 
-# 1. Iniciamos el sistema
-mi_sistema = SistemaPedidos()
+# producto_prueba = Producto("Cepillo",5000)
+# envio_prueba = Envio_estandar()
 
-# 2. Agregamos algunos pedidos de prueba
-mi_sistema.agregar_pedido(101, "Ana García", "Laptop", "Envío Express")
-mi_sistema.agregar_pedido(102, "Juan Pérez", "Teclado Mecánico", "Retiro en Tienda")
-mi_sistema.agregar_pedido(103, "Carlos López", "Monitor 24 pulgadas", "Correo Estándar")
+# pedido_prueba = Pedido(2,producto_prueba,envio_prueba)
 
-# 3. Mostramos todos los pedidos almacenados
-mi_sistema.mostrar_pedidos()
+# print(pedido_prueba)
 
+# Gestor_pedidos.pedidos_storage(pedido_prueba)
 
-
-
+for i in Gestor_pedidos.pedidos_reading(): print(i,"\n")
+print(Gestor_pedidos.pedidos_reading())
 
 
 
